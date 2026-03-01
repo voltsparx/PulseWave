@@ -1,0 +1,13 @@
+border_style: color(214)
+highlight_style: bold color(214)
+progress_style: bold color(220)
+visualizer_style: color(214)
+accent_style: bold color(220)
+muted_style: color(178)
+error_style: bold color(203)
+border_type: single
+progress_fill: "▰"
+progress_empty: "▱"
+visualizer_levels: "▁▂▃▄▅▆▇█"
+header_left: "◉"
+header_right: "◉"

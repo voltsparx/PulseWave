@@ -1,0 +1,13 @@
+border_style: green
+highlight_style: bold bright_green
+progress_style: bold bright_green
+visualizer_style: green
+accent_style: bold bright_green
+muted_style: dim green
+error_style: bold bright_red
+border_type: single
+progress_fill: "█"
+progress_empty: "·"
+visualizer_levels: " ▁▂▃▄▅▆▇█"
+header_left: "◼"
+header_right: "◼"

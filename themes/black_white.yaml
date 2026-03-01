@@ -1,0 +1,14 @@
+border_style: white
+highlight_style: bold white
+progress_style: bold white
+visualizer_style: white
+accent_style: bold white
+muted_style: dim white
+error_style: reverse white
+border_type: double
+progress_fill: "■"
+progress_empty: "·"
+visualizer_levels: " ▁▂▃▄▅▆▇█"
+header_left: "◆"
+header_right: "◆"
+

@@ -4,6 +4,11 @@
  Hybrid: Python + Cython + C++
 ========================
 
+========================
+Author: voltsparx
+contact: voltsparx@gmail.com
+========================
+
 PHILOSOPHY
 ----------
 Python  : orchestration, UI logic, search, settings
