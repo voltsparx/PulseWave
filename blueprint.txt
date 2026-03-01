@@ -1,0 +1,362 @@
+========================
+ PULSEWAVE — MASTER BLUEPRINT
+ Minimal Retro CLI Music Player
+ Hybrid: Python + Cython + C++
+========================
+
+PHILOSOPHY
+----------
+Python  : orchestration, UI logic, search, settings
+Cython  : bridge layer for performance-critical calls
+C++     : audio playback, DSP, FFT, visualizer engine
+
+GOALS
+-----
+✔ Minimalist retro CLI that feels like GUI
+✔ Monochrome default, optional color themes
+✔ Fast audio playback & seeking
+✔ Beautiful ASCII audio visualizer
+✔ Local + YouTube Music playback
+✔ Keyboard-driven navigation
+✔ Modular & future-proof
+✔ Can compile into single binary later
+
+
+========================
+PROJECT STRUCTURE
+========================
+
+PulseWave/
+│
+├── pulsewave/                     # Python package
+│   ├── cli.py                     # Entry point
+│   ├── app.py                     # Main event loop
+│   │
+│   ├── core/
+│   │   ├── player.py              # Playback controller
+│   │   ├── queue.py               # Playlist & queue manager
+│   │   ├── search.py              # Local & YouTube search
+│   │   ├── config.py              # Settings manager
+│   │   └── state.py               # Global state
+│   │
+│   ├── ui/
+│   │   ├── renderer.py            # Layout engine
+│   │   ├── components.py          # Progress bar, panels
+│   │   ├── themes.py              # Theme definitions
+│   │   ├── keybinds.py            # Keyboard input handling
+│   │   └── visualizer.py          # Python fallback visualizer
+│   │
+│   ├── integrations/
+│   │   ├── ytmusic.py             # YouTube Music API wrapper
+│   │   └── local_scan.py          # Local file scanner
+│   │
+│   └── utils/
+│       ├── logger.py
+│       └── helpers.py
+│
+├── native/                        # C++ core
+│   ├── audio/
+│   │   ├── audio_engine.cpp       # Playback engine
+│   │   ├── audio_engine.h
+│   │   ├── decoder.cpp            # MP3/FLAC decoding
+│   │   └── decoder.h
+│   │
+│   ├── dsp/
+│   │   ├── fft.cpp                # FFT for visualizer
+│   │   ├── fft.h
+│   │   ├── visualizer.cpp         # Bar generation
+│   │   └── visualizer.h
+│   │
+│   └── bindings/
+│       ├── pulsewave.pyx          # Cython bridge
+│       └── setup.py               # Cython build script
+│
+├── themes/
+│   ├── default.yaml               # monochrome
+│   ├── amber.yaml                 # retro CRT
+│   ├── green.yaml                 # hacker theme
+│   └── ice.yaml                   # modern minimal
+│
+├── temp/                          # Reverse engineering references
+│   ├── cava/                      # audio visualizer inspiration
+│   ├── cmus/                      # CLI music player reference
+│   ├── mpv/                       # playback design reference
+│   └── ncmpcpp/                   # UI inspiration
+│
+├── assets/
+│   └── ascii_logo.txt
+│
+├── build/
+│   ├── CMakeLists.txt             # C++ build config
+│   └── compile.sh
+│
+└── README.md
+
+
+
+========================
+CORE MODULE RESPONSIBILITIES
+========================
+
+cli.py
+------
+- parses args
+- loads config
+- starts app loop
+
+app.py
+------
+- main event loop
+- handles input, render cycle, playback updates
+
+player.py
+---------
+- play, pause, stop
+- seek, rewind
+- volume control
+- communicates with C++ audio engine
+
+queue.py
+--------
+- playlist management
+- next/prev logic
+- shuffle, repeat
+
+search.py
+---------
+- local file search
+- YouTube Music search
+- fuzzy matching
+
+config.py
+---------
+- theme mode
+- color toggle
+- keybindings
+- audio buffer size
+
+state.py
+--------
+- currently playing track
+- playback time
+- visualizer data
+
+
+
+========================
+C++ AUDIO ENGINE (native/audio)
+========================
+
+Responsibilities:
+- low-latency playback
+- decoding (mp3, flac, wav)
+- buffering
+- seek & rewind
+- expose waveform data
+
+Recommended libraries:
+- PortAudio (cross-platform output)
+- libsndfile (decoding)
+- mpg123 (MP3 decoding)
+- FFmpeg (optional advanced support)
+
+Key Functions:
+--------------
+init_audio()
+load_file(path)
+play()
+pause()
+seek(seconds)
+get_position()
+get_waveform_chunk()
+
+
+
+========================
+DSP & VISUALIZER (native/dsp)
+========================
+
+Responsibilities:
+- FFT processing
+- amplitude extraction
+- bar height generation
+
+Pipeline:
+---------
+Audio → FFT → frequency bins → normalize → ASCII bar heights
+
+ASCII levels:
+-------------
+▁▂▃▄▅▆▇█
+
+Output:
+-------
+array<int> bar_heights
+
+
+
+========================
+CYTHON BRIDGE (native/bindings)
+========================
+
+pulsewave.pyx exposes:
+
+- init_audio()
+- play_file(path)
+- pause()
+- seek(seconds)
+- get_position()
+- get_visualizer_data()
+
+Purpose:
+--------
+Fast bridge between Python UI and C++ engine.
+
+
+
+========================
+UI SYSTEM
+========================
+
+Renderer Responsibilities:
+-------------------------
+- draw layout
+- update progress bar
+- draw visualizer
+- handle resizing
+
+Layout Example:
+---------------
+┌──────────────────────────────┐
+│ PulseWave v0.1               │
+├──────────────────────────────┤
+│ Now Playing:                 │
+│ > Song — Artist              │
+│                              │
+│ [██████░░░░░░] 1:42 / 3:50   │
+│                              │
+│ ▂▄▆█▇▆▄▂▁▁▂▄▆█▇▆▄▂          │
+├──────────────────────────────┤
+│ Space: Play/Pause  Q: Quit   │
+└──────────────────────────────┘
+
+
+
+========================
+THEME SYSTEM
+========================
+
+Modes:
+------
+color_mode = off | basic | full
+
+default.yaml (monochrome)
+amber.yaml   (retro CRT)
+green.yaml   (hacker)
+ice.yaml     (modern minimal)
+
+Theme fields:
+-------------
+border_style
+highlight_style
+progress_style
+visualizer_style
+
+
+
+========================
+SEARCH SYSTEM
+========================
+
+Local:
+- scan directories
+- metadata parsing
+- fuzzy search
+
+YouTube Music:
+--------------
+Use: ytmusicapi (Python)
+
+Capabilities:
+- search songs
+- fetch stream URLs
+- cache results
+
+
+
+========================
+KEY FEATURES
+========================
+
+Playback:
+✔ play/pause
+✔ seek/rewind
+✔ time bar
+✔ volume control
+
+Interface:
+✔ keyboard navigation
+✔ responsive layout
+✔ retro ASCII visualizer
+
+Search:
+✔ local search
+✔ YouTube Music search
+
+Themes:
+✔ monochrome default
+✔ optional colors
+
+Performance:
+✔ C++ audio engine
+✔ FFT visualizer
+✔ Cython bridge
+
+
+
+========================
+TEMP REVERSE ENGINEERING FOLDER
+========================
+
+Purpose:
+--------
+Study implementations & ideas only.
+
+Suggested repos:
+----------------
+temp/
+ ├── cava/        → visualizer math
+ ├── cmus/        → CLI UX ideas
+ ├── ncmpcpp/     → layout inspiration
+ └── mpv/         → playback architecture
+
+
+
+========================
+FUTURE FEATURES
+========================
+
+- lyrics panel
+- mouse support
+- Last.fm scrobbling
+- waveform seek bar
+- plugin system
+- streaming cache
+- TUI animations
+
+
+
+========================
+BUILD PIPELINE
+========================
+
+1. Build C++ core (CMake)
+2. Compile Cython bindings
+3. Package Python app
+4. Optional: bundle into single binary (PyInstaller)
+
+
+
+========================
+END OF BLUEPRINT
+========================
