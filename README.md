@@ -20,11 +20,6 @@ This project was built by reverse-engineering architecture and UX patterns from 
 
 No source code was copied directly; reverse engineering was used for methods, interaction models, and robustness patterns.
 
-## 🏗️ Architecture Split Target
-
-- Python: about `60%`
-- C++/native path: about `40%` (optional, enabled when toolchain is available)
-
 ## 🚀 Quick Start
 
 Install dependencies:
