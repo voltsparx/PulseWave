@@ -1,6 +1,6 @@
 setuptools>=68
 wheel>=0.41
-pyinstaller>=6.0.0
+nuitka>=2.6.0
 cython>=3.0.0
 ytmusicapi>=1.8.0
 yt-dlp>=2023.12.30

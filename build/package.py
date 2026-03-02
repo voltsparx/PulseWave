@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import os
 import shutil
 import subprocess
 import sys
@@ -12,6 +11,21 @@ from pathlib import Path
 def run(cmd: list[str], cwd: Path) -> None:
     print("+", " ".join(cmd))
     subprocess.run(cmd, cwd=str(cwd), check=True)
+
+
+def ensure_nuitka_available() -> None:
+    probe = [sys.executable, "-m", "nuitka", "--version"]
+    result = subprocess.run(probe, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False)
+    if result.returncode == 0:
+        version = result.stdout.strip().splitlines()[0] if result.stdout.strip() else "unknown"
+        print(f"+ Nuitka detected: {version}")
+        return
+    err = result.stderr.strip() or result.stdout.strip() or "unknown error"
+    raise RuntimeError(
+        "Nuitka is not available for this interpreter. "
+        "Install it via `python -m pip install nuitka` and retry. "
+        f"Details: {err}"
+    )
 
 
 def prepare_staging(root: Path) -> Path:
@@ -71,12 +85,14 @@ def cleanup_staging_root(staging_root: Path) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Build PulseWave-11 single binary with PyInstaller")
+    parser = argparse.ArgumentParser(description="Build PulseWave-11 single binary with Nuitka")
     parser.add_argument("--with-native", action="store_true", help="Attempt building Cython native module first")
+    parser.add_argument("--debug-nuitka", action="store_true", help="Enable Nuitka diagnostics output")
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parents[1]
-    spec = root / "build" / "pulsewave-11.spec"
+    output_binary = root / "dist" / ("pulsewave-11.exe" if sys.platform.startswith("win") else "pulsewave-11")
+    ensure_nuitka_available()
 
     if args.with_native:
         setup_py = root / "native" / "bindings" / "setup.py"
@@ -85,26 +101,51 @@ def main() -> int:
         else:
             print("native/bindings/setup.py not found; skipping native build.")
 
-    env = dict(os.environ)
-    env.setdefault("PYTHONUTF8", "1")
-
     staging_dir = prepare_staging(root)
-    env["PULSEWAVE11_STAGING"] = str(staging_dir)
     try:
-        safe_delete(root / "dist" / ("pulsewave-11.exe" if os.name == "nt" else "pulsewave-11"))
+        safe_delete(output_binary)
     except OSError:
         pass
-    cmd = [sys.executable, "-m", "PyInstaller", "--noconfirm", str(spec)]
+
+    cmd = [
+        sys.executable,
+        "-m",
+        "nuitka",
+        "--onefile",
+        "--standalone",
+        "--follow-imports",
+        "--remove-output",
+        "--output-dir=dist",
+        f"--output-filename={output_binary.name}",
+        str(staging_dir / "pulsewave_11_cli.py"),
+    ]
+
+    themes_dir = root / "themes"
+    if themes_dir.exists():
+        cmd.append(f"--include-data-dir={themes_dir}=themes")
+    assets_dir = root / "assets"
+    if assets_dir.exists():
+        cmd.append(f"--include-data-dir={assets_dir}=assets")
+
+    # Include optional native extension modules when present.
+    if list(root.glob("pulsewave_11_native*.pyd")) or list(root.glob("pulsewave_11_native*.so")) or list(root.glob("pulsewave_11_native*.dylib")):
+        cmd.append("--include-module=pulsewave_11_native")
+    if list(root.glob("pulsewave_native*.pyd")) or list(root.glob("pulsewave_native*.so")) or list(root.glob("pulsewave_native*.dylib")):
+        cmd.append("--include-module=pulsewave_native")
+
+    if args.debug_nuitka:
+        cmd.append("--show-progress")
+
     print("+", " ".join(cmd))
     try:
-        subprocess.run(cmd, cwd=str(root), check=True, env=env)
+        subprocess.run(cmd, cwd=str(root), check=True)
     finally:
         try:
             safe_delete(staging_dir)
         except OSError:
             pass
 
-    print(f"Built binary at: {root / 'dist' / ('pulsewave-11.exe' if os.name == 'nt' else 'pulsewave-11')}")
+    print(f"Built binary at: {output_binary}")
     return 0
 
 

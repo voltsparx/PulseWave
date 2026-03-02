@@ -6,6 +6,11 @@ param(
 $ErrorActionPreference = "Stop"
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $python = if ($env:PYTHON) { $env:PYTHON } else { "python" }
+$defaultBin = if ($env:LOCALAPPDATA) {
+    Join-Path $env:LOCALAPPDATA "Programs\\PulseWave11\\bin"
+} else {
+    Join-Path $HOME "AppData\\Local\\Programs\\PulseWave11\\bin"
+}
 
 function Invoke-Manage {
     param([string[]]$ArgsToPass)
@@ -56,7 +61,7 @@ switch ($choice) {
     "2" {
         $manageArgs = @("install")
         Write-Host "Install location:"
-        Write-Host "1) local bin (default: ~/.local/bin)"
+        Write-Host "1) local bin (default: $defaultBin)"
         Write-Host "2) custom location"
         $locChoice = Read-Host "Choose [1-2]"
         if ($locChoice -eq "2") {

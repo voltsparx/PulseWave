@@ -360,7 +360,7 @@ BUILD PIPELINE
 1. Build C++ core (CMake)
 2. Compile Cython bindings
 3. Package Python app
-4. Optional: bundle into single binary (PyInstaller)
+4. Optional: bundle into single binary (Nuitka)
 
 
 

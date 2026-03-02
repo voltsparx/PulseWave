@@ -160,7 +160,7 @@ python .\building-scripts\manage.py install --bin-dir "$HOME\AppData\Local\Progr
 Get-Content .\commands.txt | python -m pulsewave-11 --stdin-commands --print-status
 
 # Custom config home
-$env:PULSEWAVE_11_CONFIG_HOME="C:\music\pulsewave-config"
+$env:PULSEWAVE_11_CONFIG_HOME="C:\music\pulsewave-11-config"
 python -m pulsewave-11
 ```
 
@@ -318,17 +318,18 @@ Native acceleration path:
 
 ## 📦 Build and Package
 
-Build native extension (optional):
+Build native extension first (optional, enables hybrid path):
 
 ```bash
 python native/bindings/setup.py build_ext --inplace
 ```
 
-Build single-file binary:
+Build single-file binary with Nuitka:
 
 ```bash
 python build/package.py
 python build/package.py --with-native
+python build/package.py --debug-nuitka
 ```
 
 Wrapper scripts:
@@ -362,6 +363,11 @@ Each wrapper provides:
 - `doctor`
 - Auto dependency install for `test/install/upgrade/update` from `requirements.txt` (with `ensurepip` fallback)
 
+Default install location (when `--bin-dir` is not set):
+
+- Linux/macOS: `~/.local/bin`
+- Windows: `%LOCALAPPDATA%\Programs\PulseWave11\bin`
+
 Non-interactive examples:
 
 ```bash
@@ -373,17 +379,14 @@ python building-scripts/manage.py uninstall --purge-config
 python building-scripts/manage.py doctor
 ```
 
-## 🪟 Native Build Prerequisite (Windows)
+## 🪟 Build Prerequisites
 
-For `--with-native`, Windows requires:
+Nuitka build requirements:
 
-- Microsoft Visual C++ 14.0+ Build Tools
+- Windows: Microsoft Visual C++ 14.0+ Build Tools
+- Linux/macOS: working C toolchain (`gcc`/`clang`) and Python development headers
 
-If unavailable, packaging still works without native:
-
-```bash
-python build/package.py
-```
+Native extension (`--with-native`) also uses the same compiler toolchain.
 
 ## 🧪 Development Checks
 

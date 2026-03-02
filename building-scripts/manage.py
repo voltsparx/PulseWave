@@ -58,6 +58,11 @@ def _normalize_path(path: Path) -> str:
 
 
 def _default_bin_dir() -> Path:
+    if os.name == "nt":
+        local_app_data = os.environ.get("LOCALAPPDATA")
+        if local_app_data:
+            return (Path(local_app_data) / "Programs" / "PulseWave11" / "bin").resolve()
+        return (Path.home() / "AppData" / "Local" / "Programs" / "PulseWave11" / "bin").resolve()
     return (Path.home() / ".local" / "bin").resolve()
 
 
@@ -80,6 +85,21 @@ def _run_check(cmd: Sequence[str], *, cwd: Path | None = None) -> bool:
 
 def _command_exists(name: str) -> bool:
     return shutil.which(name) is not None
+
+
+def _nuitka_info(python_exe: str) -> tuple[bool, str]:
+    result = subprocess.run(
+        [python_exe, "-m", "nuitka", "--version"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        check=False,
+    )
+    if result.returncode == 0:
+        line = result.stdout.strip().splitlines()
+        return True, (line[0] if line else "unknown")
+    err = result.stderr.strip() or result.stdout.strip() or "not installed"
+    return False, err
 
 
 def _sha256_file(path: Path) -> str:
@@ -523,12 +543,15 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     state = _load_install_state()
     dist_binary = _dist_binary()
     install_binary = Path(state.binary_path).expanduser() if state else None
+    nuitka_available, nuitka_detail = _nuitka_info(args.python)
     payload = {
         "app": APP_NAME,
         "version": _app_version(),
         "platform": platform.platform(),
         "python_executable": args.python,
         "python_version": sys.version.split()[0],
+        "nuitka_available": nuitka_available,
+        "nuitka_detail": nuitka_detail,
         "requirements_file_exists": REQ_FILE.exists(),
         "package_script_exists": PACKAGE_SCRIPT.exists(),
         "dist_binary_exists": dist_binary.exists(),
@@ -546,7 +569,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="pulsewave-build",
+        prog="pulsewave-11-build",
         description="Cross-platform PulseWave-11 build/install manager",
     )
     sub = parser.add_subparsers(dest="command", required=True)
