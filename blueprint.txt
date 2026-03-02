@@ -1,5 +1,5 @@
 ========================
- PULSEWAVE — MASTER BLUEPRINT
+ PULSEWAVE-11 — MASTER BLUEPRINT
  Minimal Retro CLI Music Player
  Hybrid: Python + Cython + C++
 ========================
@@ -31,9 +31,9 @@ GOALS
 PROJECT STRUCTURE
 ========================
 
-PulseWave/
+PulseWave-11/
 │
-├── pulsewave/                     # Python package
+├── pulsewave-11/                  # Python package
 │   ├── cli.py                     # Entry point
 │   ├── app.py                     # Main event loop
 │   │
@@ -73,7 +73,7 @@ PulseWave/
 │   │   └── visualizer.h
 │   │
 │   └── bindings/
-│       ├── pulsewave.pyx          # Cython bridge
+│       ├── pulsewave-11.pyx       # Cython bridge
 │       └── setup.py               # Cython build script
 │
 ├── themes/
@@ -88,12 +88,14 @@ PulseWave/
 │   ├── mpv/                       # playback design reference
 │   └── ncmpcpp/                   # UI inspiration
 │
-├── assets/
-│   └── ascii_logo.txt
-│
+├── CMakeLists.txt                 # C++ build config (repo root)
 ├── build/
-│   ├── CMakeLists.txt             # C++ build config
 │   └── compile.sh
+│
+├── building-scripts/
+│   ├── manage.py
+│   ├── linux-install.sh
+│   └── windows-install.ps1
 │
 └── README.md
 
@@ -204,7 +206,7 @@ array<int> bar_heights
 CYTHON BRIDGE (native/bindings)
 ========================
 
-pulsewave.pyx exposes:
+pulsewave-11.pyx exposes:
 
 - init_audio()
 - play_file(path)
@@ -233,7 +235,7 @@ Renderer Responsibilities:
 Layout Example:
 ---------------
 ┌──────────────────────────────┐
-│ PulseWave v0.1               │
+│ PulseWave-11 v0.1            │
 ├──────────────────────────────┤
 │ Now Playing:                 │
 │ > Song — Artist              │

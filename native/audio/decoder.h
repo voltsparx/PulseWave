@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace pulsewave {
+namespace pulsewave_11 {
 
 class Decoder {
 public:
@@ -15,5 +15,4 @@ private:
     std::string path_;
 };
 
-}  // namespace pulsewave
-
+}  // namespace pulsewave_11

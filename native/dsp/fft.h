@@ -2,9 +2,9 @@
 
 #include <vector>
 
-namespace pulsewave {
+namespace pulsewave_11 {
 
 std::vector<float> compute_fft_magnitude(const std::vector<float>& samples, int bins);
+std::vector<float> compute_signal_stats(const std::vector<float>& samples);
 
-}  // namespace pulsewave
-
+}  // namespace pulsewave_11

@@ -3,18 +3,24 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pulsewave"
-version = "0.1.0"
+name = "pulsewave-11"
+version = "1.0.0"
 description = "Minimal retro CLI music player"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
 
 [project.optional-dependencies]
-youtube = ["ytmusicapi>=1.11.0", "yt-dlp>=2026.1.0"]
+youtube = ["ytmusicapi>=1.8.0", "yt-dlp>=2023.12.30"]
 mpv = ["python-mpv>=1.0.8"]
 native = ["cython>=3.0.0"]
+build = ["pyinstaller>=6.0.0"]
 
 [project.scripts]
-pulsewave = "pulsewave.cli:main"
+pulsewave-11 = "pulsewave_11_cli:main"
 
+[tool.setuptools]
+py-modules = ["pulsewave_11_cli"]
+
+[tool.setuptools.packages.find]
+include = ["pulsewave-11*"]

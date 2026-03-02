@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace pulsewave {
+namespace pulsewave_11 {
 
 class AudioEngine {
 public:
@@ -21,5 +21,4 @@ private:
     bool playing_ = false;
 };
 
-}  // namespace pulsewave
-
+}  // namespace pulsewave_11

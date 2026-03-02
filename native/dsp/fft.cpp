@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace pulsewave {
+namespace pulsewave_11 {
 
 std::vector<float> compute_fft_magnitude(const std::vector<float>& samples, int bins) {
     if (bins <= 0) {
@@ -31,4 +31,22 @@ std::vector<float> compute_fft_magnitude(const std::vector<float>& samples, int 
     return out;
 }
 
-}  // namespace pulsewave
+std::vector<float> compute_signal_stats(const std::vector<float>& samples) {
+    if (samples.empty()) {
+        return {0.0f, 0.0f, 0.0f};
+    }
+    float peak = 0.0f;
+    double energy = 0.0;
+    for (float value : samples) {
+        const float abs_value = std::abs(value);
+        if (abs_value > peak) {
+            peak = abs_value;
+        }
+        energy += static_cast<double>(value) * static_cast<double>(value);
+    }
+    const float rms = static_cast<float>(std::sqrt(energy / static_cast<double>(samples.size())));
+    const float crest = rms > 0.000001f ? (peak / rms) : 0.0f;
+    return {rms, peak, crest};
+}
+
+}  // namespace pulsewave_11

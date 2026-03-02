@@ -1,4 +1,6 @@
-from pulsewave.ui.visualizer import VisualizerEngine
+from importlib import import_module
+
+VisualizerEngine = import_module("pulsewave-11.ui.visualizer").VisualizerEngine
 
 
 def test_visualizer_output_range() -> None:
@@ -7,4 +9,3 @@ def test_visualizer_output_range() -> None:
     bars = engine.compute_bars(samples)
     assert len(bars) == 16
     assert all(0 <= x <= 7 for x in bars)
-

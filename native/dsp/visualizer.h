@@ -2,9 +2,8 @@
 
 #include <vector>
 
-namespace pulsewave {
+namespace pulsewave_11 {
 
 std::vector<int> make_bar_heights(const std::vector<float>& magnitudes, int levels);
 
-}  // namespace pulsewave
-
+}  // namespace pulsewave_11

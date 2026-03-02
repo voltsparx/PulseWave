@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace pulsewave {
+namespace pulsewave_11 {
 
 bool AudioEngine::init_audio() {
     // Placeholder for PortAudio/FFmpeg initialization.
@@ -54,5 +54,4 @@ std::vector<float> AudioEngine::get_waveform_chunk(int size) const {
     return values;
 }
 
-}  // namespace pulsewave
-
+}  // namespace pulsewave_11

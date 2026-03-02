@@ -1,5 +1,8 @@
-from pulsewave.core.queue import QueueManager
-from pulsewave.core.state import RepeatMode, Track
+from importlib import import_module
+
+QueueManager = import_module("pulsewave-11.core.queue").QueueManager
+RepeatMode = import_module("pulsewave-11.core.state").RepeatMode
+Track = import_module("pulsewave-11.core.state").Track
 
 
 def _track(i: int) -> Track:
@@ -30,4 +33,3 @@ def test_previous_without_repeat_can_end() -> None:
     queue.set_index(0)
     prev = queue.previous_track(RepeatMode.OFF, shuffle_enabled=False)
     assert prev is None
-

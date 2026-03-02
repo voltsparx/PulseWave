@@ -6,3 +6,13 @@ __pycache__/
 .venv/
 venv/
 build/out/
+dist/
+.pulsewave-11-config/
+build/pulsewave-11/
+build/.staging/
+native/bindings/*.cpp
+native/bindings/*.pyd
+native/bindings/*.so
+native/bindings/*.dylib
+native/bindings/build/
+*.egg-info/

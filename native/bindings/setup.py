@@ -11,10 +11,10 @@ ROOT = Path(__file__).resolve().parent.parent
 
 extensions = [
     Extension(
-        name="pulsewave_native",
+        name="pulsewave_11_native",
         language="c++",
         sources=[
-            str(Path(__file__).resolve().parent / "pulsewave.pyx"),
+            str(Path(__file__).resolve().parent / "pulsewave-11.pyx"),
             str(ROOT / "audio" / "audio_engine.cpp"),
             str(ROOT / "audio" / "decoder.cpp"),
             str(ROOT / "dsp" / "fft.cpp"),
@@ -25,7 +25,6 @@ extensions = [
 ]
 
 setup(
-    name="pulsewave-native",
+    name="pulsewave-11-native",
     ext_modules=cythonize(extensions, language_level=3),
 )
-

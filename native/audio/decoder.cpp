@@ -1,6 +1,6 @@
 #include "decoder.h"
 
-namespace pulsewave {
+namespace pulsewave_11 {
 
 bool Decoder::open(const std::string& path) {
     path_ = path;
@@ -18,5 +18,4 @@ void Decoder::close() {
     path_.clear();
 }
 
-}  // namespace pulsewave
-
+}  // namespace pulsewave_11
